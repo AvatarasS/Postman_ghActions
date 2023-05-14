@@ -14,24 +14,24 @@ jobs:
         with:
           node-version: "16.x"
       - name: Install newman
-        run: npm install -g newman
-      - name: Install newman HTML reporter
-        run: npm install -g newman-reporter-htmlextra
+        run: |
+            npm install -g newman
+            npm install -g newman-reporter-htmlextra
       - name: Make Directory for results
-        run: mkdir testResults
+        run: mkdir -p testResults
       - name: Run POSTMAN collection
-        if: always()
-        run: newman run petstore.collection.json -r cli,htmlextra --reporter-htmlextra-export ./testResults/index.html
+        continue-on-error: true
+        run: |
+            npx newman run petstore.collection.json -r htmlextra --reporter-htmlextra-export testResult/index.html
+      - name: Deploy report page
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            publish_dir: testResult
+            user_name: "github-actions[bot]"
+            user_email: "github-actions[bot]@users.noreply.github.com"
       - name: Output the run Details
-        if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: RunReports
-          path: ./testResults
-      - name: Deploy report
-        if: always()
-        uses: JamesIves/github-pages-deploy-action@4.1.4
-        with:
-          branch: gh-pages
-          folder: testResults
-          target-folder: docs
+            name: Newman
+            path: testResults
