@@ -21,7 +21,7 @@ jobs:
         run: mkdir testResults
       - name: Run POSTMAN collection
         if: always()
-        run: npm run newman:run:petstore
+        run: npx newman run petstore.collection.json -r htmlextra --reporter-htmlextra-export testResult/index.html
       - name: Output the run Details
         if: always()
         uses: actions/upload-artifact@v2
