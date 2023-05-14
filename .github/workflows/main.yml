@@ -24,11 +24,6 @@ jobs:
         run: |
             npx newman run petstore.collection.json -r htmlextra --reporter-htmlextra-export testResult/index.html
       
-      - name: Output the run Details
-        uses: actions/upload-artifact@v2
-        with:
-            name: Newman
-
       - name: Upload Report
 
         uses: actions/upload-pages-artifact@v1
