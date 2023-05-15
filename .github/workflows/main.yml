@@ -39,7 +39,7 @@ jobs:
 
         with:
 
-          path: testResults
+          path: ./testResults/index.html
 
       - name: Deploy to GitHub Pages
 
