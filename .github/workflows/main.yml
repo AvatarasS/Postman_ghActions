@@ -1,53 +1,71 @@
-name: Test
+name: Test-Build
+
 on:
+
   push:
+
     branches:
-    - main
-permissions:
 
-  contents: read
+      - main
 
-  pages: write
-
-  id-token: write
 jobs:
+
   test-api:
+
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+
+      - uses: actions/checkout@v2
+
+      # INstall Node on the runner
+
       - name: Install Node
-        uses: actions/setup-node@v3
+
+        uses: actions/setup-node@v1
+
         with:
+
           node-version: "16.x"
-          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: npm i npm@latest
+
+      - run: npm i
+
+      # Install the newman command line utility and also install the html extra reporter
+
       - name: Install newman
+
         run: |
-            npm install -g newman
-            npm install -g newman-reporter-htmlextra
+
+          npm install -g newman
+
+          npm install -g newman-reporter-htmlextra
+
+      # Make directory to upload the test results
+
       - name: Make Directory for results
-        run: mkdir -p testResults
+
+        run: mkdir -p docs
+
+      # Run the POSTMAN collection
+
       - name: Run POSTMAN collection
-        continue-on-error: true
+
         run: |
-            newman run petstore.collection.json -r htmlextra --reporter-htmlextra-export testResults/htmlreport.html --reporter-htmlextra-darkTheme  > testResults/runreport1.html
-      
-      - name: Upload Report
 
-        uses: actions/upload-pages-artifact@v2
+          newman run petstore.collection.json -r htmlextra --reporter-htmlextra-export docs/index.html --reporter-htmlextra-darkTheme || true
 
+      # Upload the contents of docs directory to workspace
 
+      - name: Output the run Details
 
-        with:
-
-          path: testResults
-
-      - name: Deploy to GitHub Pages
-
-        id: deployment
-
-        uses: actions/deploy-pages@v1
+        uses: actions/upload-artifact@v2
 
         with:
 
-          token: ${{ secrets.GITHUB_TOKEN }}
+          name: RunReports
+
+          path: docs
