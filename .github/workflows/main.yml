@@ -42,11 +42,13 @@ jobs:
         run: |
           newman run petstore.collection.json -r htmlextra --reporter-htmlextra-export results/index.html --reporter-htmlextra-darkTheme || true
 
-
+      - name: Upload Report
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./results
+          
       # Upload the contents of docs directory to workspace
       - name: Output the run Details
         uses: actions/deploy-pages@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: RunReports
-          path: results
